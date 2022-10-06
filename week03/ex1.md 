@@ -1,0 +1,10 @@
+# Ex1 Week 3
+
+you can check the website from (here)[https://blockchain-ivory.vercel.app]
+
+# Difference between JavaScript VM and injected Web3
+
+Javascript VM: It will run an isolated ethereum node in the browser. It is very useful when you want to test a contract.
+
+Injected Web3: It will try to use the "Web3 provider" embedded in the browser. For example MetaMask extension will embedd a "Web3 provider",
+you can configure to connect that provider to a testnet or to mainnet. This allow to interact with a real network.
