@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>BlockChain Week03</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script src='node_modules/web3/dist/web3.min.js'></script>
+</head>
+
+<body>
+
+BlockChain Week03
+<br>
+<button onclick="adding();">Addition</button>
+<button onclick="subtracting();">Subtraction</button>
+<button onclick="multiplying();">Multiplication</button>
+<button onclick="dividing();">Division</button>
+<br/><br/>
+Status: <span id="status">Loading...</span>
+
+<script type="text/javascript">
+    async function loadWeb3() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+            window.ethereum.enable();
+        }
+    }
+
+    async function loadContract() {
+        return new window.web3.eth.Contract([
+            {
+                "inputs": [],
+                "name": "adding",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "ans",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "dividing",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "multiplying",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "num1",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "num2",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "subtracting",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ], '0xe8ea6FBE63D238EC3e122F22A93F162eF25dB672');
+    }
+
+    async function showAnswer(operation) {
+        const ans = await window.contract.methods.ans().call();
+        updateStatus(`${operation} Result: ${ans}`);
+    }
+
+    async function adding() {
+        const num1 = await window.contract.methods.num1().call();
+        const num2 = await window.contract.methods.num2().call();
+        updateStatus(`adding ${num1} and ${num2}...`);
+        const account = await getCurrentAccount();
+
+        await window.contract.methods.adding().send({from: account});
+
+        await showAnswer('Addition');
+    }
+
+    async function subtracting() {
+        const num1 = await window.contract.methods.num1().call();
+        const num2 = await window.contract.methods.num2().call();
+
+        updateStatus(`subtracting ${num1} and ${num2}...`);
+        const account = await getCurrentAccount();
+
+        await window.contract.methods.subtracting().send({from: account});
+        await showAnswer('Subtraction');
+    }
+
+    async function multiplying() {
+        const num1 = await window.contract.methods.num1().call();
+        const num2 = await window.contract.methods.num2().call();
+
+        updateStatus(`multiplying ${num1} and ${num2}...`);
+        const account = await getCurrentAccount();
+
+        await window.contract.methods.multiplying().send({from: account});
+        await showAnswer('Multiplication');
+    }
+
+    async function dividing() {
+        const num1 = await window.contract.methods.num1().call();
+        const num2 = await window.contract.methods.num2().call();
+
+        updateStatus(`dividing ${num1} and ${num2}...`);
+        const account = await getCurrentAccount();
+
+        await window.contract.methods.dividing().send({from: account});
+        await showAnswer('division');
+
+    }
+
+    async function getCurrentAccount() {
+        const accounts = await window.web3.eth.getAccounts();
+        return accounts[0];
+    }
+
+    async function load() {
+        await loadWeb3();
+        window.contract = await loadContract();
+        updateStatus('Ready!');
+    }
+
+    function updateStatus(status) {
+        const statusEl = document.getElementById('status');
+        statusEl.innerHTML = status;
+        console.log(status);
+    }
+
+    load();
+</script>
+</body>
+
+</html>
