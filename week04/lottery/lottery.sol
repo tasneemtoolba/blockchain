@@ -5,10 +5,10 @@ pragma solidity >= 0.6.0 <0.9.0;
 // import "github.com/Arachnid/solidity-stringutils/strings.sol";
 
 contract Lottery {
-
+    
     address public manager;
     address payable[] public players;
-    uint randNonce = 0;
+    uint randNonce = 0;  
       uint[]  indices;
 
 
@@ -17,7 +17,7 @@ contract Lottery {
     }
 
     modifier restricted() {
-        assert(msg.sender == manager);
+        require(msg.sender == manager);
         _;
     }
 
@@ -28,20 +28,15 @@ contract Lottery {
     }
 
     function random() private returns (uint) {
-        randNonce++;
+        randNonce++; 
         return uint(keccak256(abi.encodePacked(block.difficulty,  block.timestamp, randNonce)));
-    }
-    function valid(address addres) public view returns(bool){
-         if((addres>=address(0xD000000000000000000000000000000000000000) && addres< address(0xE000000000000000000000000000000000000000))||(addres>=address(0xf000000000000000000000000000000000000000))){
-            return true;
-           }
-           return false;
     }
 
     function pickWinner() public restricted {
         delete indices;
-       for(uint i = 0;i < players.length; i+=1){
-           if(valid(players[i])){
+       for(uint i = 0;i < players.length; i++){
+          address payable addres = players[i];
+         if((addres>=address(0xD000000000000000000000000000000000000000) && addres< address(0xE000000000000000000000000000000000000000))||(addres>=address(0xf000000000000000000000000000000000000000))){
                        indices.push(i);
            }
         }
