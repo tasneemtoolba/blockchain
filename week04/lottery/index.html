@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta content='IE=edge' http-equiv='X-UA-Compatible'>
+    <title>BlockChain Week03</title>
+    <meta content='width=device-width, initial-scale=1' name='viewport'>
+
+</head>
+
+<body>
+<script src="https://rawgit.com/ethereumjs/browser-builds/master/dist/ethereumjs-abi/ethereumjs-abi-0.6.5.js"></script>
+<script src="https://rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+
+Lottery
+<br>
+<button onclick="showWinner();">Pick Winner</button>
+<button onclick="enterLottery();">Enter The Lottery</button>
+<button onclick="getPlayers();">Get Players</button>
+<br/><br/>
+Status: <span id="status">Loading...</span>
+
+<script type="text/javascript">
+    async function loadWeb3() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+            window.ethereum.enable();
+        }
+    }
+
+    async function loadContract() {
+        return new window.web3.eth.Contract([
+            {
+                "inputs": [],
+                "name": "enter",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "pickWinner",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [],
+                "name": "getPlayers",
+                "outputs": [
+                    {
+                        "internalType": "address payable[]",
+                        "name": "",
+                        "type": "address[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "manager",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "players",
+                "outputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "addres",
+                        "type": "address"
+                    }
+                ],
+                "name": "valid",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ], '0xd9145CCE52D386f254917e481eB44e9943F39138');
+    }
+
+    async function showWinner() {
+        const account = await getCurrentAccount();
+
+       const msg=  await window.contract.methods.pickWinner().send({from: account});
+        updateStatus(msg);
+    }
+
+    async function getPlayers() {
+        const account = await getCurrentAccount();
+        const players = await window.contract.methods.getPlayers().send({from: account});
+
+        updateStatus(players);
+    }
+
+    async function enterLottery() {
+        const account = await getCurrentAccount();
+        try {
+           const msg =  await window.contract.methods.enter().send({from: account});
+            await updateStatus(msg);
+
+        } catch (err) {
+            console.log(err)
+        updateStatus(err);
+
+        }
+
+    }
+
+    async function getCurrentAccount() {
+        const accounts = await window.web3.eth.getAccounts();
+        return accounts[0];
+    }
+
+    async function load() {
+        await loadWeb3();
+        window.contract = await loadContract();
+        updateStatus('Ready!');
+    }
+
+    function updateStatus(status) {
+        const statusEl = document.getElementById('status');
+        statusEl.innerHTML = status;
+        console.log(status);
+    }
+
+    load();
+</script>
+</body>
+
+</html>
